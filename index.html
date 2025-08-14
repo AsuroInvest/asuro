@@ -1,222 +1,412 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Ebook Wolverine — Seja um Trader Fera</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Estratégia Wolverine — Página de Vendas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root{
-      --bg:#000000;
-      --primary:#6DAF00;
-      --primary-light:#91E500;
-      --accent:#A5EC5C;
-      --dark:#0f1a00;
-      --white:#FFFFFF;
+      --bg:#062b24;
+      --bg-2:#0a3a31;
+      --card:#103d33;
+      --muted:#a7ff83;
+      --muted-2:#d7ffc7;
+      --text:#e8fff3;
+      --text-dim:#bfe9d2;
+      --shadow:0 10px 30px rgba(0,0,0,.35);
+      --border:1px solid rgba(255,255,255,.08);
+      --radius:16px;
     }
-    *{box-sizing:border-box;margin:0;padding:0}
+    *{box-sizing:border-box}
+    html,body{height:100%}
     body{
-      background:var(--bg);
-      color:var(--white);
-      font-family:Arial, Helvetica, sans-serif;
-      line-height:1.5;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
+      margin:0;
+      font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Helvetica,Arial,sans-serif;
+      color:var(--text);
+      background: radial-gradient(1200px 600px at 50% -10%, #0f4a3e 0%, var(--bg) 45%, #04221d 100%);
+      overflow-x:hidden;
     }
 
-    header{ text-align:center; padding:48px 16px 12px; }
-    header h1{ font-size:2.6rem; color:var(--primary-light); margin-bottom:6px; }
-    header p{ color:var(--accent); font-size:1.05rem; font-weight:600; }
-
-    /* CARROSSEL (manual) */
-    .carousel{ max-width:900px; margin:28px auto; border-radius:10px; overflow:hidden;
-               border:4px solid var(--primary); background:#0b0b0b; position:relative; }
-    .slides{ display:flex; transition:transform .45s ease-in-out; width:100%; }
-    .slides img{ width:100%; flex-shrink:0; object-fit:contain; display:block; }
-
-    .carousel-controls{ position:absolute; bottom:12px; left:50%; transform:translateX(-50%);
-                        display:flex; gap:8px; }
-    .carousel-controls button{
-      background:var(--primary); color:#000; border:none; padding:8px 12px;
-      border-radius:6px; cursor:pointer; font-weight:700; box-shadow:0 4px 12px rgba(0,0,0,0.6);
+    /* ===== BACKGROUND GRID / LINES ===== */
+    .bg-grid::before,
+    .bg-grid::after{
+      content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;opacity:.25;
+      background-image:
+        linear-gradient(transparent 96%, rgba(167,255,131,.18) 98%),
+        linear-gradient(90deg, transparent 96%, rgba(167,255,131,.18) 98%);
+      background-size: 60px 60px, 60px 60px;
+      background-position:center center;
+      mix-blend-mode:screen;
     }
-    .carousel-controls button:hover{ background:var(--primary-light); }
+    .bg-grid::after{
+      z-index:-1;opacity:.35;filter: blur(0.5px);
+      background-image:
+        repeating-linear-gradient(90deg, rgba(167,255,131,.06) 0 2px, transparent 2px 120px),
+        repeating-linear-gradient(0deg, rgba(167,255,131,.06) 0 2px, transparent 2px 120px);
+      animation: moveLines 18s linear infinite;
+    }
+    @keyframes moveLines{to{background-position: 120px 0, 0 120px}}
 
-    /* CTA */
-    .countdown{ text-align:center; margin:26px 0; font-size:1.8rem; color:var(--primary); font-weight:700; }
-    .cta-wrap{ text-align:center; margin:18px 0 36px; }
-    .cta-button{
-      background:var(--primary); color:#000; display:inline-block;
-      padding:16px 40px; border-radius:10px; text-decoration:none; font-size:1.2rem; font-weight:800;
-      box-shadow:0 10px 30px rgba(105, 175, 0, 0.18);
+    /* ===== HEADER ===== */
+    header{
+      position:sticky;top:0;z-index:20;
+      display:flex;align-items:center;justify-content:space-between;
+      padding:16px 28px;background:rgba(0,0,0,.35);backdrop-filter: blur(8px);
+      border-bottom:var(--border);
     }
-    .cta-button:hover{ background:var(--primary-light); }
+    .brand{font-weight:800;letter-spacing:.12em;color:var(--muted)}
+    .btn{
+      appearance:none;border:0;border-radius:999px;padding:12px 18px;font-weight:700;cursor:pointer;
+      background: linear-gradient(180deg, var(--muted) 0%, #79ff5a 100%);
+      color:#062b24;box-shadow:0 8px 20px rgba(167,255,131,.25);
+      text-decoration:none;display:inline-flex;align-items:center;gap:8px;
+    }
+    .btn:hover{transform:translateY(-1px)}
 
-    /* BENEFÍCIOS */
-    section { padding:28px 18px; text-align:center; }
-    h2.section-title{ color:var(--white); font-size:1.4rem; margin-bottom:18px; }
-    .benefits{
-      max-width:1200px; margin:0 auto; display:grid;
-      grid-template-columns:repeat(auto-fit, minmax(220px,1fr)); gap:18px;
+    /* ===== HERO ===== */
+    .hero{padding:74px 18px 28px;text-align:center;position:relative}
+    .hero h1{font-size:44px;line-height:1.05;margin:8px 0 10px;color:var(--muted);text-shadow:0 2px 0 rgba(0,0,0,.2)}
+    .hero .sub{opacity:.9;max-width:880px;margin:0 auto 14px}
+    .hero .pill{
+      margin:20px auto 22px;max-width:900px;padding:14px 18px;border-radius:14px;
+      background: rgba(8,48,40,.6); border:var(--border); box-shadow: var(--shadow);
     }
-    .benefit{
-      background:linear-gradient(180deg,var(--dark),#213000);
-      border:2px solid rgba(107, 175, 0, 0.08);
-      padding:22px; border-radius:10px; color:var(--white);
-      box-shadow:0 6px 18px rgba(0,0,0,0.6); transition:transform .25s, box-shadow .25s;
-      text-align:center;
-    }
-    .benefit:hover{ transform:translateY(-6px); box-shadow:0 14px 30px rgba(0,0,0,0.7); }
-    .benefit .icon{ font-size:2.1rem; color:var(--primary-light); margin-bottom:10px; display:block; }
-    .benefit p{ margin-top:6px; color:#e9f9c7; font-weight:600; }
+    .hero ul{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px 18px;list-style:none;padding:0;margin:10px auto 0;max-width:900px}
+    .hero li{opacity:.95}
 
-    /* DEPOIMENTOS */
-    .testimonial-area{ max-width:820px; margin:28px auto 36px; text-align:center; }
-    .testimonial-carousel{ overflow:hidden; border-radius:10px; }
-    .testimonial-track{ display:flex; transition:transform .45s ease; }
-    .testimonial-card{
-      min-width:100%; background:rgba(255,255,255,0.03); padding:22px; border-left:6px solid var(--primary);
-      box-shadow:0 6px 22px rgba(0,0,0,0.6); font-style:italic; color:#eafbe0;
-      position:relative;
+    /* ===== OFFER CARD ===== */
+    .offer-wrap{display:flex;flex-direction:column;align-items:center;gap:14px;margin:20px auto 18px}
+    .offer-card{
+      background:linear-gradient(180deg, #b8ffc0 0%, #a7ff83 100%);
+      color:#0b2f25;max-width:380px;border-radius:18px;padding:18px 20px;text-align:center;box-shadow:0 30px 60px rgba(0,0,0,.35)
     }
-    .testimonial-card::before{
-      content:"“"; position:absolute; left:14px; top:-8px; font-size:2.6rem; color:var(--primary-light);
-    }
-    .testimonial-author{ margin-top:12px; font-weight:800; color:var(--accent); }
+    .price-old{color:#1a4f3f;text-decoration:line-through;font-weight:600;opacity:.7}
+    .price-now{font-size:34px;font-weight:800;margin:6px 0 8px}
+    .what-include{font-size:14px;opacity:.9;text-align:left;margin:10px auto 16px;max-width:290px}
+    .what-include li{margin:6px 0}
+    .timer-shell{width:min(740px,95%);padding:10px;border-radius:12px;background:rgba(8,48,40,.6);border:var(--border);text-align:center}
+    .timer{font-weight:800;letter-spacing:.08em}
+    .cta{margin-top:12px}
 
-    .testimonial-controls{ margin-top:12px; display:flex; gap:10px; justify-content:center; }
-    .testimonial-controls button{
-      background:var(--primary); color:#000; border:none; padding:8px 12px; border-radius:6px; cursor:pointer;
-      font-weight:700;
-    }
-    .testimonial-controls button:hover{ background:var(--primary-light); }
+    /* ===== WHY SECTION ===== */
+    .sec{padding:54px 18px}
+    .title{font-size:22px;text-align:center;margin:0 auto 26px;max-width:900px}
+    .cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;max-width:1000px;margin:0 auto}
+    .card{background: rgba(9,54,44,.6);border:var(--border);padding:18px;border-radius:14px;box-shadow:var(--shadow)}
+    .card h4{margin:6px 0 8px;color:var(--muted)}
+    .card p{margin:0;opacity:.9}
+    .icon{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:rgba(167,255,131,.18);border:1px solid rgba(167,255,131,.35)}
 
-    footer{ padding:26px 12px; color:var(--accent); text-align:center; margin-top:32px; font-size:0.95rem; }
+    /* ===== LEARN SECTION ===== */
+    .learn{display:grid;grid-template-columns:1.3fr .9fr;gap:26px;max-width:1050px;margin:0 auto}
+    .checklist{background:rgba(9,54,44,.6);border:var(--border);border-radius:16px;padding:18px 20px}
+    .checklist li{margin:10px 0;display:flex;gap:10px}
+    .chk{flex:0 0 20px;height:20px;border-radius:999px;background:linear-gradient(180deg,#a7ff83,#79ff5a);display:inline-block}
 
-    /* responsivo */
-    @media (max-width:600px){
-      header h1{ font-size:1.9rem; }
-      .countdown{ font-size:1.2rem; }
-      .cta-button{ padding:12px 22px; font-size:1rem; }
+    .phone{
+      position:relative;justify-self:center;align-self:start;width:270px;height:520px;border-radius:34px;padding:18px;background:linear-gradient(180deg,#0d2c25,#081f19);border:2px solid #0f4b3e;box-shadow:0 25px 70px rgba(0,0,0,.55)
     }
-  </style>
+    .phone:before{content:"";position:absolute;top:10px;left:50%;transform:translateX(-50%);width:100px;height:5px;border-radius:99px;background:#0f4b3e}
+    .screen{position:absolute;inset:56px 14px 14px;border-radius:24px;background:#0a251f;border:1px solid rgba(167,255,131,.18);display:grid;place-items:center}
+    .screen h5{margin:0 0 8px;color:var(--muted)}
+    .dots{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);display:flex;gap:6px}
+    .dots span{width:6px;height:6px;border-radius:50%;background:#2e6b57}
+    .dots span.active{background:#a7ff83}
+    .nav-b{position:absolute;top:50%;width:34px;height:34px;border-radius:50%;border:1px solid rgba(167,255,131,.35);display:grid;place-items:center}
+    .nav-b.left{left:-18px}.nav-b.right{right:-18px}
+
+    /* ===== TESTIMONIALS ===== */
+    .t-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;max-width:1050px;margin:0 auto}
+    .t-card{background:rgba(9,54,44,.6);border:var(--border);border-radius:14px;padding:18px;box-shadow:var(--shadow)}
+    .stars{color:#ffe26b;font-size:18px;letter-spacing:2px}
+    .student{opacity:.85;margin-top:8px;font-size:14px}
+
+    /* ===== FLOAT NOTIFICATION ===== */
+    .float-note{
+      position:fixed;left:18px;bottom:18px;z-index:30;background:rgba(9,54,44,.9);border:var(--border);border-left:4px solid var(--muted);padding:12px 14px;border-radius:12px;box-shadow:var(--shadow);
+      display:flex;gap:10px;align-items:center;max-width:280px;animation:pop 0.4s ease, blink 6s 2s linear infinite
+    }
+    .float-ava{width:28px;height:28px;border-radius:50%;background:linear-gradient(180deg,#a7ff83,#79ff5a)}
+    @keyframes pop{from{transform:translateY(8px);opacity:0}to{transform:none;opacity:1}}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:.65}}
+
+    /* ===== FINAL CTA ===== */
+    .final{padding:56px 18px 80px;background: radial-gradient(1200px 600px at 50% 10%, #0d3c33, #062b24 55%) }
+    .price-box{background:linear-gradient(180deg,#b8ffc0,#a7ff83);color:#083126;padding:20px;border-radius:18px;max-width:360px;margin:14px auto;text-align:center;box-shadow:var(--shadow)}
+
+    footer{text-align:center;padding:28px 18px;border-top:var(--border);opacity:.9}
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width:960px){
+      .hero ul{grid-template-columns:1fr}
+      .cards{grid-template-columns:1fr 1fr}
+      .learn{grid-template-columns:1fr}
+      .t-grid{grid-template-columns:1fr}
+      .phone{margin-top:12px}
+    }
+  
+.carousel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.carousel img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.carousel img.active {
+  opacity: 1;
+}
+
+</style>
 </head>
-<body>
-
+<body class="bg-grid">
+  <!-- ===== HEADER ===== -->
   <header>
-    <h1>🔥 EBOOK WOLVERINE</h1>
-    <p>Seja um trader feroz e domine o mercado com precisão.</p>
+    <div class="brand">ASURO</div>
+    <a class="btn" href="https://payfast.greenn.com.br/122172">ADQUIRIR AGORA</a>
   </header>
 
-  <!-- CARROSSEL DE IMAGENS (manual) -->
-  <div class="carousel" aria-label="Carrossel de imagens do ebook">
-    <div class="slides" id="imageSlides">
-      <!-- Substitua pelos seus arquivos de imagem -->
-      <img src="1.png" alt="Página do Ebook - 1">
-      <img src="2.png" alt="Página do Ebook - 2">
-      <img src="3.png" alt="Página do Ebook - 3">
+  <!-- ===== HERO ===== -->
+  <section class="hero">
+    <h1>Estratégia Wolverine</h1>
+    <p class="sub">"A Estratégia dos Traders Profissionais para Amassar o Mini Dólar Todos os Dias"</p>
+
+    <div class="pill">Oferta Exclusiva: Aprenda a Estratégia que entrega no mínimo 10 pontos por dia no Dólar Futuro.</div>
+
+    <ul>
+      <li>✅ Sabendo onde os institucionais estão defendendo preço</li>
+      <li>✅ Identificando distorçôes reais de valor com a VWAP</li>
+      <li>✅ Usando o fluxo dos DIs para antecipar movimentos com precisão</li>
+    </ul>
+	
+	<p class="sub">"<div class="pill">Quer consistência no Mini Dólar? Comece com uma estratégia que entrega resultado.</div>"</p>
+
+    <p style="margin:18px 0 0;opacity:.9">Garanta seu acesso agora</p>
+
+    <div id="oferta" class="offer-wrap">
+      <div class="offer-card">
+        <div class="price-old">De R$ 97,90</div>
+        <div class="price-now">por R$ 39,90</div>
+        <div style="font-weight:700;margin:10px 0 6px">O que está incluso:</div>
+        <ul class="what-include">
+          <li>✔ E-book Wolverine</li>
+          <li>✔ Indicador Wolverine</li>
+          <li>✔ Fundamento da VWAP</li>
+          <li>✔ Indicador DI Ponderado</li>
+          <li>✔ O que são os Dis?</li>
+          <li>✔ Gestão de Risco</li>
+          <li>✔ Regras do Operacionais</li>
+          <li>✔ Exemplos de Trades</li>
+        </ul>
+        <a href="#" class="btn">ADQUIRIR O E-BOOK AGORA</a>
+      </div>
+
+      <div class="timer-shell">
+        Oferta especial termina em: <span id="timer" class="timer">--:--:--</span>
+      </div>
+      <div class="cta"><a href="https://payfast.greenn.com.br/122172" class="btn">ADQUIRIR O E-BOOK AGORA</a></div>
     </div>
+  </section>
 
-    <div class="carousel-controls" aria-hidden="false">
-      <button type="button" onclick="prevImage()">‹</button>
-      <button type="button" onclick="nextImage()">›</button>
-    </div>
-  </div>
-
-  <div class="countdown" id="countdown">Oferta termina em: <strong id="timer">00:10:00</strong></div>
-
-  <div class="cta-wrap">
-    <a class="cta-button" href="https://payfast.greenn.com.br/122172">ACESSAR AGORA – R$39,90</a>
-  </div>
-
-  <!-- BENEFÍCIOS -->
-  <section>
-    <h2 class="section-title">O que você vai dominar</h2>
-    <div class="benefits">
-      <div class="benefit">
-        <span class="icon">🏹</span>
-        <p>Técnicas de entrada e saída infalíveis</p>
+  <!-- ===== WHY ===== -->
+  <section class="sec">
+    <h2 class="title">Por que escolher a Estratégia Wolverine?</h2>
+    <div class="cards">
+      <div class="card">
+        <div class="icon">💡</div>
+        <h4>Metodologia Comprovada</h4>
+        <p>Estratégia baseada em volatilidade e juros ponderado, base fundamentada, entregando consistência e resultados reais.</p>
       </div>
-      <div class="benefit">
-        <span class="icon">🛡️</span>
-        <p>Gestão de risco que protege seu capital</p>
+      <div class="card">
+        <div class="icon">🎯</div>
+        <h4>Regras Claras</h4>
+        <p>Condições explícitas de entrada com alvos e stops objetivos, permitindo operação com precisão.</p>
       </div>
-      <div class="benefit">
-        <span class="icon">🧠</span>
-        <p>Psicologia do trader — controle emocional</p>
+      <div class="card">
+        <div class="icon">⚡</div>
+        <h4>Indicador Exclusivo</h4>
+        <p>DI Ponderados customizado que analisa a curva de juros futura para identificar oportunidades de arbitragem e Wolverine que analisa a volatilidade do Dólar Futuro.</p>
       </div>
-      <div class="benefit">
-        <span class="icon">🚀</span>
-        <p>Estratégias para aumentar sua taxa de acerto</p>
+      <div class="card">
+        <div class="icon">🛡️</div>
+        <h4>Gestão de Risco</h4>
+        <p>Plano de risco e dimensionamento de posição, com metas diárias e proteção de capital.</p>
+      </div>
+      <div class="card">
+        <div class="icon">📈</div>
+        <h4>Alta Liquidez</h4>
+        <p>Operando no mercado de dólar futuro, com liquidez elevada e diversas oportunidades diárias.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🧪</div>
+        <h4>Exemplos Práticos</h4>
+        <p>Casos reais, prints e exemplos detalhados para aplicar o conhecimento desde o primeiro dia.</p>
       </div>
     </div>
   </section>
 
-  <!-- DEPOIMENTOS -->
-  <section class="testimonial-area" aria-label="Depoimentos dos alunos">
-    <h2 class="section-title">Depoimentos de Alunos</h2>
-
-    <div class="testimonial-carousel" role="region">
-      <div class="testimonial-track" id="testimonialTrack">
-        <div class="testimonial-card">
-          Comprei o Ebook Wolverine e minhas operações melhoraram 3x em apenas uma semana.
-          <div class="testimonial-author">— Ana P.</div>
-        </div>
-        <div class="testimonial-card">
-          Conteúdo estratégico, objetivo e transformador. Vale cada centavo!
-          <div class="testimonial-author">— Carlos M.</div>
-        </div>
-        <div class="testimonial-card">
-          Nunca imaginei aprender tanto em tão pouco tempo. Recomendo a todos.
-          <div class="testimonial-author">— João S.</div>
-        </div>
+  <!-- ===== WHAT YOU'LL LEARN ===== -->
+  <section class="sec">
+    <h2 class="title">O que você vai aprender:</h2>
+    <div class="learn">
+      <div class="checklist">
+        <ul style="list-style:none;padding:0;margin:0">
+          <li><span class="chk"></span>Fundamentos completos de volatilidade e sua importância</li>
+          <li><span class="chk"></span>Estrutura macroeconômica do dólar futuro</li>
+          <li><span class="chk"></span>Estratégia simples e objetiva (alvos e entradas)</li>
+          <li><span class="chk"></span>Análise de grandes players e fluxo</li>
+          <li><span class="chk"></span>Psicologia do preço e zonas-chave</li>
+          <li><span class="chk"></span>Identificar zonas de breakouts e falsos</li>
+          <li><span class="chk"></span>Leitura de book e tape reading</li>
+          <li><span class="chk"></span>Rastrear microtendências por ciclos</li>
+          <li><span class="chk"></span>Gestão profissional de risco e capital</li>
+        </ul>
       </div>
+      
+<div class="phone">
+  <div class="nav-b left">‹</div>
+  <div class="nav-b right">›</div>
+  <div class="screen">
+    <div class="carousel">
+      <img src="1.png" alt="Slide 1" class="active">
+      <img src="2.png" alt="Slide 2">
+      <img src="3.png" alt="Slide 3">
+	  <img src="4.png" alt="Slide 4">
+	  <img src="5.png" alt="Slide 5">
+	  <img src="6.png" alt="Slide 6">
+	  <img src="7.png" alt="Slide 7">
     </div>
+    <div class="dots">
+      <span class="active"></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+</div>
 
-    <div class="testimonial-controls" aria-hidden="false">
-      <button type="button" onclick="prevTestimonial()">‹</button>
-      <button type="button" onclick="nextTestimonial()">›</button>
+      </div>
     </div>
   </section>
 
-  <div class="cta-wrap">
-    <a class="cta-button" href="https://payfast.greenn.com.br/122172">GARANTIR AGORA – VAGA LIMITADA</a>
-  </div>
+  <!-- ===== TESTIMONIALS ===== -->
+  <section class="sec">
+    <h2 class="title">O que dizem nossos alunos</h2>
+    <div class="t-grid">
+      <div class="t-card">
+        <div class="stars">★★★★★</div>
+        <p>"A metodologia Wolverine mudou completamente minha forma de operar. Com estratégia clara e disciplina, fechei o mês no verde. 5 estrelas!"</p>
+        <div class="student">Carlos M. — Trader há 3 anos</div>
+      </div>
+      <div class="t-card">
+        <div class="stars">★★★★★</div>
+        <p>"Material direto ao ponto e muito bem explicado. O indicador de VVU facilitou demais as confirmações."</p>
+        <div class="student">Ana Paula S. — Day Trader</div>
+      </div>
+      <div class="t-card">
+        <div class="stars">★★★★★</div>
+        <p>"Depois de anos perdendo dinheiro, encontrei uma estratégia objetiva. Resultados consistentes!"</p>
+        <div class="student">Roberto L. — Swing Trader</div>
+      </div>
+    </div>
+  </section>
 
-  <footer>&copy; 2025 Wolverine Trading • Todos os direitos reservados</footer>
+  <!-- ===== FINAL CTA ===== -->
+  <section class="final">
+    <h2 class="title" style="font-size:26px">Pronto para transformar seu trading?</h2>
+    <p class="title" style="opacity:.9;margin-top:-10px">Junte-se a centenas de alunos que já estão lucrando consistentemente com a Estratégia Wolverine.</p>
+    <div class="price-box">
+      <div class="price-old">De R$ 97,90</div>
+      <div class="price-now">por R$ 39,90</div>
+      <div style="font-weight:700;margin:10px 0 6px">O que está incluso:</div>
+      <ul class="what-include" style="margin:0 auto 10px">
+        <li>✔ E-book Wolverine</li>
+        <li>✔ Indicador Exclusivo</li>
+        <li>✔ Fundamentos de VVU</li>
+        <li>✔ Exemplos de Trades</li>
+      </ul>
+      <a href="https://payfast.greenn.com.br/122172" class="btn">QUERO COMEÇAR A LUCRAR AGORA</a>
+    </div>
+    <p style="text-align:center;opacity:.85">🛡️ Garantia de 7 dias — Se não gostar, devolvemos 100% do seu dinheiro.</p>
+  </section>
+
+  <footer>
+    © 2025 Estratégia Wolverine — Todos os direitos reservados.
+  </footer>
+
+  <!-- FLOATING NOTIFICATION -->
+  <div class="float-note" id="note">
+    <div class="float-ava"></div>
+    <div>
+      <strong>Anderson</strong>, acabou de comprar o <strong>E-book Wolverine</strong>.<br>
+      <small style="opacity:.8">Há 1 min · "Vou usar essa estratégia no mini dólar!"</small>
+    </div>	
+  </div>
 
   <script>
-    // countdown (10 minutos)
-    const targetTime = Date.now() + 10 * 60 * 1000;
-    const timerEl = document.getElementById('timer');
-    function updateCountdown(){
-      const diff = targetTime - Date.now();
-      if(diff <= 0){ timerEl.textContent = '00:00:00'; return; }
-      const mm = String(Math.floor(diff/60000)).padStart(2,'0');
-      const ss = String(Math.floor((diff%60000)/1000)).padStart(2,'0');
-      timerEl.textContent = `${mm}:${ss}`;
-    }
-    setInterval(updateCountdown, 1000);
-    updateCountdown();
+    // ===== Persistent 2-hour countdown using localStorage =====
+    (function(){
+      const KEY = 'wolv_timer_end_v1';
+      const TWO_HOURS = 2*60*60*1000;
+      let end = localStorage.getItem(KEY);
+      const now = Date.now();
+      if(!end || now > +end){
+        end = now + TWO_HOURS; localStorage.setItem(KEY, end);
+      }
+      const el = document.getElementById('timer');
+      const tick = () => {
+        const remain = +end - Date.now();
+        if(remain <= 0){
+          // reset on finish
+          end = Date.now() + TWO_HOURS; localStorage.setItem(KEY, end);
+        }
+        const s = Math.max(0, Math.floor((+end - Date.now())/1000));
+        const hh = String(Math.floor(s/3600)).padStart(2,'0');
+        const mm = String(Math.floor((s%3600)/60)).padStart(2,'0');
+        const ss = String(s%60).padStart(2,'0');
+        if(el) el.textContent = `${hh}:${mm}:${ss}`;
+      }
+      tick(); setInterval(tick, 1000);
+    })();
 
-    // CARROSSEL DE IMAGENS (manual)
-    let imgIndex = 0;
-    const slides = document.getElementById('imageSlides');
-    const totalImgs = slides.children.length;
-    function showImage(i){
-      slides.style.transform = `translateX(-${i*100}%)`;
-    }
-    function prevImage(){ imgIndex = (imgIndex - 1 + totalImgs) % totalImgs; showImage(imgIndex); }
-    function nextImage(){ imgIndex = (imgIndex + 1) % totalImgs; showImage(imgIndex); }
+    // ===== Float note simple cycle visibility =====
+    (function(){
+      const note = document.getElementById('note');
+      let visible = true;
+      setInterval(()=>{
+        visible = !visible; note.style.display = visible ? 'flex' : 'none';
+      }, 10000);
+    })();
+  
+(function(){
+  const slides = document.querySelectorAll('.carousel img');
+  const dots = document.querySelectorAll('.dots span');
+  let index = 0;
+  function showSlide(i){
+    slides.forEach((s, idx) => {
+      s.classList.toggle('active', idx === i);
+      dots[idx].classList.toggle('active', idx === i);
+    });
+    index = i;
+  }
+  document.querySelector('.nav-b.left').addEventListener('click', () => {
+    showSlide((index - 1 + slides.length) % slides.length);
+  });
+  document.querySelector('.nav-b.right').addEventListener('click', () => {
+    showSlide((index + 1) % slides.length);
+  });
+  dots.forEach((dot, i) => dot.addEventListener('click', () => showSlide(i)));
+  showSlide(0);
+})();
 
-    // DEPOIMENTOS (manual)
-    let tIndex = 0;
-    const tTrack = document.getElementById('testimonialTrack');
-    const tTotal = tTrack.children.length;
-    function showTestimonial(i){ tTrack.style.transform = `translateX(-${i*100}%)`; }
-    function prevTestimonial(){ tIndex = (tIndex - 1 + tTotal) % tTotal; showTestimonial(tIndex); }
-    function nextTestimonial(){ tIndex = (tIndex + 1) % tTotal; showTestimonial(tIndex); }
-  </script>
+</script>
 </body>
 </html>
-
-
