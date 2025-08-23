@@ -126,18 +126,31 @@
 
     /* ===== FLOAT NOTIFICATION ===== */
     .float-note{
-      position:fixed;left:18px;bottom:18px;z-index:30;background:rgba(9,54,44,.9);border:var(--border);border-left:4px solid var(--muted);padding:12px 14px;border-radius:12px;box-shadow:var(--shadow);
-      display:flex;gap:10px;align-items:center;max-width:280px;animation:pop 0.4s ease, blink 6s 2s linear infinite
+      position:fixed;left:18px;bottom:18px;z-index:30;background:rgba(9,54,44,.95);border:var(--border);border-left:4px solid var(--muted);padding:12px 16px;border-radius:12px;box-shadow:0 15px 35px rgba(0,0,0,.4);
+      display:flex;gap:12px;align-items:center;max-width:320px;
+      transform:translateX(-100%);opacity:0;
+      transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      backdrop-filter: blur(8px);
     }
-    .float-ava{width:28px;height:28px;border-radius:50%;background:linear-gradient(180deg,#a7ff83,#79ff5a)}
-    @keyframes pop{from{transform:translateY(8px);opacity:0}to{transform:none;opacity:1}}
-    @keyframes blink{0%,100%{opacity:1}50%{opacity:.65}}
+    .float-note.show{
+      transform:translateX(0);opacity:1;
+    }
+    .float-ava{
+      width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#a7ff83,#79ff5a);
+      display:flex;align-items:center;justify-content:center;color:#062b24;font-weight:700;font-size:14px;
+      box-shadow:0 4px 8px rgba(167,255,131,.25);
+    }
+    .notification-content{flex:1}
+    .notification-name{font-weight:700;color:var(--muted)}
+    .notification-action{font-weight:600;margin:2px 0}
+    .notification-time{opacity:.8;font-size:12px;color:var(--text-dim)}
+    .notification-quote{font-size:12px;font-style:italic;opacity:.9;margin-top:4px;color:var(--muted-2)}
+
+    footer{text-align:center;padding:28px 18px;border-top:var(--border);opacity:.9}
 
     /* ===== FINAL CTA ===== */
     .final{padding:56px 18px 80px;background: radial-gradient(1200px 600px at 50% 10%, #0d3c33, #062b24 55%) }
     .price-box{background:linear-gradient(180deg,#b8ffc0,#a7ff83);color:#083126;padding:20px;border-radius:18px;max-width:360px;margin:14px auto;text-align:center;box-shadow:var(--shadow)}
-
-    footer{text-align:center;padding:28px 18px;border-top:var(--border);opacity:.9}
 
     /* ===== RESPONSIVE ===== */
     @media (max-width:960px){
@@ -146,6 +159,7 @@
       .learn{grid-template-columns:1fr}
       .t-grid{grid-template-columns:1fr}
       .phone{margin-top:12px}
+      .float-note{left:12px;bottom:12px;max-width:280px}
     }
   
 .carousel {
@@ -172,7 +186,7 @@
   <!-- ===== HEADER ===== -->
   <header>
     <div class="brand">ASURO</div>
-    <a class="btn" href="https://lastlink.com/p/C3ADCBDA7/checkout-payment/">ADQUIRIR AGORA</a>
+    <a class="btn" href="https://payfast.greenn.com.br/122172">ADQUIRIR AGORA</a>
   </header>
 
   <!-- ===== HERO ===== -->
@@ -213,7 +227,7 @@
       <div class="timer-shell">
         Oferta especial termina em: <span id="timer" class="timer">--:--:--</span>
       </div>
-      <div class="cta"><a href="https://lastlink.com/p/C3ADCBDA7/checkout-payment/" class="btn">ADQUIRIR O E-BOOK AGORA</a></div>
+      <div class="cta"><a href="https://payfast.greenn.com.br/122172" class="btn">ADQUIRIR O E-BOOK AGORA</a></div>
     </div>
   </section>
 
@@ -343,12 +357,13 @@
   </footer>
 
   <!-- FLOATING NOTIFICATION -->
-  <div class="float-note" id="note">
-    <div class="float-ava"></div>
-    <div>
-      <strong>Anderson</strong>, acabou de comprar o <strong>E-book Wolverine</strong>.<br>
-      <small style="opacity:.8">Há 1 min · "Vou usar essa estratégia no mini dólar!"</small>
-    </div>	
+  <div class="float-note" id="notification">
+    <div class="float-ava" id="userAvatar"></div>
+    <div class="notification-content">
+      <div><span class="notification-name" id="userName"></span>, <span class="notification-action" id="userAction"></span></div>
+      <div class="notification-time" id="userTime"></div>
+      <div class="notification-quote" id="userQuote"></div>
+    </div>
   </div>
 
   <script>
@@ -377,13 +392,119 @@
       tick(); setInterval(tick, 1000);
     })();
 
-    // ===== Float note simple cycle visibility =====
+    // ===== Enhanced Float Notification with Multiple Users =====
     (function(){
-      const note = document.getElementById('note');
-      let visible = true;
-      setInterval(()=>{
-        visible = !visible; note.style.display = visible ? 'flex' : 'none';
-      }, 10000);
+      // Aguardar o DOM carregar completamente
+      function initNotifications() {
+        const notification = document.getElementById('notification');
+        const userName = document.getElementById('userName');
+        const userAction = document.getElementById('userAction');
+        const userTime = document.getElementById('userTime');
+        const userQuote = document.getElementById('userQuote');
+        const userAvatar = document.getElementById('userAvatar');
+        
+        // Verificar se todos os elementos existem
+        if (!notification || !userName || !userAction || !userTime || !userQuote || !userAvatar) {
+          console.warn('Elementos da notificação não encontrados');
+          return;
+        }
+        
+        const users = [
+          {
+            name: "Anderson",
+            action: "acabou de comprar o E-book Wolverine",
+            quote: "Vou usar essa estratégia no mini dólar!",
+            initial: "A",
+            timeAgo: "Há 1 min"
+          },
+          {
+            name: "Mariana",
+            action: "adquiriu a Estratégia Wolverine",
+            quote: "Finalmente algo que funciona de verdade!",
+            initial: "M",
+            timeAgo: "Há 3 min"
+          },
+          {
+            name: "Rafael",
+            action: "comprou o pacote completo",
+            quote: "Já estava perdendo muito, preciso de uma estratégia sólida",
+            initial: "R",
+            timeAgo: "Há 5 min"
+          },
+          {
+            name: "Juliana",
+            action: "garantiu seu acesso ao Wolverine",
+            quote: "Os exemplos práticos me convenceram!",
+            initial: "J",
+            timeAgo: "Há 7 min"
+          },
+          {
+            name: "Pedro",
+            action: "acabou de adquirir",
+            quote: "Preciso de consistência no meu trading",
+            initial: "P",
+            timeAgo: "Há 9 min"
+          },
+          {
+            name: "Luciana",
+            action: "comprou a Estratégia Wolverine",
+            quote: "O indicador DI Ponderado parece incrível!",
+            initial: "L",
+            timeAgo: "Há 12 min"
+          },
+          {
+            name: "Bruno",
+            action: "garantiu sua vaga",
+            quote: "Vou aplicar isso no dólar futuro hoje mesmo",
+            initial: "B",
+            timeAgo: "Há 15 min"
+          },
+          {
+            name: "Fernanda",
+            action: "adquiriu o e-book",
+            quote: "Cansei de perder dinheiro, hora de mudar!",
+            initial: "F",
+            timeAgo: "Há 18 min"
+          }
+        ];
+        
+        let currentIndex = 0;
+        
+        function showNotification() {
+          const user = users[currentIndex];
+          
+          userName.textContent = user.name;
+          userAction.textContent = user.action;
+          userTime.textContent = user.timeAgo;
+          userQuote.textContent = user.quote;
+          userAvatar.textContent = user.initial;
+          
+          notification.classList.add('show');
+          
+          // Hide after 4 seconds
+          setTimeout(() => {
+            if (notification) {
+              notification.classList.remove('show');
+            }
+          }, 4000);
+          
+          // Move to next user
+          currentIndex = (currentIndex + 1) % users.length;
+        }
+        
+        // Show first notification after 2 seconds
+        setTimeout(showNotification, 2000);
+        
+        // Then show new notifications every 8 seconds (4s visible + 4s hidden)
+        setInterval(showNotification, 8000);
+      }
+      
+      // Aguardar DOM carregar
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initNotifications);
+      } else {
+        initNotifications();
+      }
     })();
   
 (function(){
